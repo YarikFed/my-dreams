@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 и 1 мечта</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: rgba(255,255,255,0.07);
+    --accent: #9b4cc9;
+    --accent2: #bc7ae8;
+    --text: #e8e4d9;
+    --muted: #7a7568;
+    --done: #3a7d5c;
+    --done-text: #6fc99a;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .header {
+    text-align: center;
+    padding: 70px 20px 50px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-eyebrow {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 300;
+    font-size: 13px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.1s forwards;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 7vw, 86px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.25s forwards;
+  }
+  .plus-sign {
+  display: inline-block;
+  position: relative;
+  top: 0.06em; /* опускает + чуть ниже */
+  font-weight: 400;
+}
+
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .progress-bar-wrap {
+    max-width: 480px;
+    margin: 32px auto 0;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .categories {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 20px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cat-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Crimson Pro', serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+  }
+
+  .cat-btn:hover, .cat-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(201,168,76,0.05);
+  }
+
+  .list-container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .category-section { margin-bottom: 56px; }
+
+  .cat-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dream-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .dream-item:hover { padding-left: 8px; background: rgba(255,255,255,0.01); }
+
+  .dream-number {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 28px;
+    opacity: 0.7;
+  }
+
+  .dream-text {
+    font-size: 18px;
+    color: rgba(232,228,217,0.85);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .dream-check {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .dream-check svg { opacity: 0; transform: scale(0); transition: 0.3s; }
+
+  .dream-item.done .dream-text { color: var(--muted); text-decoration: line-through; }
+  .dream-item.done .dream-check { background: var(--done); border-color: var(--done); }
+  .dream-item.done .dream-check svg { opacity: 1; transform: scale(1); }
+
+  /* Особый стиль для 101 мечты */
+  .special-dream {
+    background: rgba(201, 168, 76, 0.03);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    padding: 30px !important;
+    margin-top: 20px;
+    border-radius: 4px;
+  }
+  
+  .special-dream .dream-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--accent2);
+  }
+
+  .special-desc {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 15px;
+    line-height: 1.6;
+    font-style: normal;
+  }
+
+  .special-quote {
+    margin-top: 20px;
+    padding-left: 20px;
+    border-left: 2px solid var(--accent);
+    font-style: italic;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 60px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Список мечт</div>
+  <h1>100 <span class="plus-sign">+</span> 1 <em>мечта</em></h1>
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Путь пройден</span>
+      <span id="progress-text">0 / 101</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<div class="categories">
+  <button class="cat-btn active" data-cat="all">Все мечты</button>
+  <button class="cat-btn" data-cat="jdm">JDM & Япония</button>
+  <button class="cat-btn" data-cat="cars">Авто & Драйв</button>
+  <button class="cat-btn" data-cat="travel">Мир</button>
+  <button class="cat-btn" data-cat="body">Тело</button>
+  <button class="cat-btn" data-cat="extreme">Экстрим</button>
+  <button class="cat-btn" data-cat="business">Бизнес</button>
+  <button class="cat-btn" data-cat="growth">Рост</button>
+  <button class="cat-btn" data-cat="style">Стиль</button>
+  <button class="cat-btn" data-cat="social">Окружение</button>
+  <button class="cat-btn" data-cat="skills">Навыки</button>
+  <button class="cat-btn" data-cat="foundation">Главное</button>
+</div>
+
+<div class="list-container" id="list-container"></div>
+
+<div class="footer-note">✦ GO DIAMOND ✦</div>
+
+<script>
+const dreams = [
+  { id:1, text:"Посетить Японию", cat:"jdm" },
+  { id:2, text:"Купить Mazda RX-7", cat:"jdm" },
+  { id:3, text:"Приехать на Mazda RX-7 в своё родное село", cat:"jdm" },
+  { id:4, text:"Увидеть гору Фудзи и покорить вершину", cat:"jdm" },
+  { id:5, text:"Увидеть цветение сакуры", cat:"jdm" },
+  { id:6, text:"Побывать в Daikoku Parking Area", cat:"jdm" },
+  { id:7, text:"Побывать в Токио во время Ханаби Тайкай", cat:"jdm" },
+  { id:8, text:"Объездить всю Японию на поезде Синкансэн", cat:"jdm" },
+  { id:9, text:"Съесть омакасе-ужин в Японии", cat:"jdm" },
+  { id:10, text:"Групповой touge-drift в японских горах", cat:"jdm" },
+  { id:11, text:"Побывать на Tokyo Auto Salon", cat:"jdm" },
+  { id:12, text:"Купить и отреставрировать JDM автомобиль", cat:"jdm" },
+  { id:13, text:"Снять кинематографичный ролик о своей Mazda RX-7", cat:"jdm" },
+  { id:14, text:"Выучить основы японского языка", cat:"jdm" },
+
+  { id:15, text:"Проехать по Route 66 на машине мечты", cat:"cars" },
+  { id:16, text:"Побывать на настоящем дрифт-ивенте", cat:"cars" },
+  { id:17, text:"Прокатиться на суперкаре на треке", cat:"cars" },
+  { id:18, text:"Купить спортивный мотоцикл и выехать в классическом образе: в брюках, рубашке с галстуком и жилетке", cat:"cars" },
+  { id:19, text:"Купить 1970 Dodge Charger R/T (как у Торетто)", cat:"cars" },
+  { id:20, text:"Сделать фотку с Вин Дизелем", cat:"cars" },
+  { id:21, text:"Дрифт в одной машине с профи и самому попробовать дрифт", cat:"cars" },
+  { id:22, text:"Арендовать дом на колесах и проехать через всю Америку", cat:"cars" },
+  { id:23, text:"Экстремальный выезд в пустыню Дубая", cat:"cars" },
+  { id:24, text:"Погонять на багги по дюнам Намибии", cat:"cars" },
+
+  { id:25, text:"Побывать в Исландии и увидеть северное сияние", cat:"travel" },
+  { id:26, text:"Провести неделю на Мальдивах", cat:"travel" },
+  { id:27, text:"Посетить Новую Зеландию", cat:"travel" },
+  { id:28, text:"Увидеть Гранд-Каньон на рассвете", cat:"travel" },
+  { id:29, text:"Проехать по норвежским фьордам", cat:"travel" },
+  { id:30, text:"Посетить Дубай и посмотреть с Бурдж-Халифа", cat:"travel" },
+  { id:31, text:"Попробовать уличную еду в 20 странах", cat:"travel" },
+  { id:32, text:"Посетить все страны G7", cat:"travel" },
+  { id:33, text:"Сафари в Танзании", cat:"travel" },
+  { id:34, text:"Посетить Швейцарию", cat:"travel" },
+
+  { id:35, text:"Построить спортивное тело", cat:"body" },
+  { id:36, text:"Иметь собственный зал для тренировок", cat:"body" },
+  { id:37, text:"Питаться чисто и осознанно без усилий", cat:"body" },
+  { id:38, text:"Пожать 150 кг лёжа", cat:"body" },
+  { id:39, text:"Научиться боксу (уровень спарринга)", cat:"body" },
+  { id:40, text:"Тренировка в Golds Gym", cat:"body" },
+  { id:41, text:"Процент жира 10–12%", cat:"body" },
+  { id:42, text:"Научиться делать стойку на руках", cat:"body" },
+
+  { id:43, text:"Прыгнуть с парашютом", cat:"extreme" },
+  { id:44, text:"Заняться хайкингом в горах", cat:"extreme" },
+  { id:45, text:"Научиться круто кататься на сноуборде и делать трюки", cat:"extreme" },
+  { id:46, text:"Покорить горную вершину выше 3000 м", cat:"extreme" },
+  { id:47, text:"Научиться серфингу", cat:"extreme" },
+  { id:48, text:"Дайвинг с аквалангом", cat:"extreme" },
+  { id:49, text:"Спринт на лошадях в седле", cat:"extreme" },
+  { id:50, text:"Побывать на рассвете в горах в одиночестве", cat:"extreme" },
+  { id:51, text:"Совершить прыжок с моста Банджи-джампинг", cat:"extreme" },
+  { id:52, text:"Совершить полёт на воздушном шаре в Каппадокии", cat:"extreme" },
+
+  { id:53, text:"Бизнес, работающий без моего участия", cat:"business" },
+  { id:54, text:"Доход 10 000€ в месяц", cat:"business" },
+  { id:55, text:"Накопить первые 100 000€", cat:"business" },
+  { id:56, text:"Пассивный доход покрывающий базовые расходы", cat:"business" },
+  { id:57, text:"Стать ментором для молодого предпринимателя", cat:"business" },
+  { id:58, text:"Собрать команду 10+ человек", cat:"business" },
+  { id:59, text:"Собственная студия / офис мечты", cat:"business" },
+  { id:60, text:"Доступ в закрытый бизнес-клуб", cat:"business" },
+
+  { id:61, text:"Свободно говорить на 2-3 языках", cat:"growth" },
+  { id:62, text:"Говорить «нет» без вины", cat:"growth" },
+  { id:63, text:"Стать человеком, которым восхищаются", cat:"growth" },
+  { id:64, text:"Энергичный распорядок дня", cat:"growth" },
+  { id:65, text:"Перестать откладывать на потом", cat:"growth" },
+  { id:66, text:"Принимать жёсткие решения без сожалений", cat:"growth" },
+  { id:67, text:"научиться говорить на публику без подготовки", cat:"growth" },
+
+  { id:68, text:"Стильная квартира с крутым интерьером", cat:"style" },
+  { id:69, text:"Гардероб высшего уровня", cat:"style" },
+  { id:70, text:"Механические часы ручной сборки", cat:"style" },
+  { id:71, text:"Костюм, сшитый на заказ", cat:"style" },
+  { id:72, text:"Профессиональная фотосессия", cat:"style" },
+  { id:73, text:"Кастомный ПК в уникальном корпусе", cat:"style" },
+  { id:74, text:"Свой стиль тату с конкретным мастером", cat:"style" },
+  { id:75, text:"Коллекция парфюмов под все случаи", cat:"style" },
+  { id:76, text:"Умный дом с голосовым управлением", cat:"style" },
+  { id:77, text:"Симфонический концерт (киномузыка)", cat:"style" },
+
+  { id:78, text:"Заплатить маме за дом или квартиру", cat:"social" },
+  { id:79, text:"Отправить маму в круизное путешествие на лайнере", cat:"social" },
+  { id:80, text:"Друзья по всему миру", cat:"social" },
+  { id:81, text:"Круг людей, которые тебя тянут вверх", cat:"social" },
+  { id:82, text:"Изменить чью-то жизнь к лучшему", cat:"social" },
+  { id:83, text:"Устроить вечеринку для всех близких", cat:"social" },
+  { id:84, text:"Собрать всех близких в одном месте", cat:"social" },
+  { id:85, text:"Ночь с лучшими друзьями у костра без телефонов", cat:"social" },
+  { id:86, text:"Сделать пожертвование, которое реально спасет чью-то жизнь", cat:"social" },
+  { id:87, text:"Вывезти друзей на отдых за свой счет", cat:"social" },
+  { id:88, text:"Стать тем, кто решит любую проблему в 3 ночи", cat:"social" },
+  { id:89, text:"Создать семейный кодекс и традиции", cat:"social" },
+
+  { id:90, text:"Научится готовить 10+ блюд идеально", cat:"skills" },
+  { id:91, text:"Сделать ужин на 6+ человек своими руками", cat:"skills" },
+  { id:92, text:"Готовить идеальный стейк на гриле", cat:"skills" },
+  { id:93, text:"Стрельба из пистолета и винтовки", cat:"skills" },
+  { id:94, text:"Научиться играть на фортепиано и гитаре", cat:"skills" },
+  { id:95, text:"Научиться профессионально управлять дроном для съемок своих поездок", cat:"skills" },
+  { id:96, text:"Научиться монтажу видео, чтобы делать крутые рилсы о своей жизни", cat:"skills" },
+  { id:97, text:"Год жизни в разных городах мира", cat:"skills" },
+  { id:98, text:"Отель 5* с видом на океан", cat:"skills" },
+  { id:99, text:"Сыграть в покер/автоматы в настоящем казино Лас-Вегаса", cat:"skills" },
+  { id:100, text:"Повторить фото Мальчишник 2: Из Вегаса в Бангкок", cat:"skills" },
+
+  { 
+    id:101, 
+    text:"Разделить этот путь с той самой женщиной", 
+    cat:"foundation",
+    special: true,
+    desc: "Это мечта о человеке, который станет не просто свидетелем моего успеха, но и полноправным участником каждого приключения. Найти ту, чей взгляд на мир резонирует с моим, чтобы вместе встречать рассвет в Гранд-Каньоне, проноситься сквозь туннели Токио на Mazda RX-7, поддерживать её в самых смелых начинаниях и строить жизнь, полную смысла и искренности.",
+    quote: "Все флаги мира, покоренные вершины и рев мотора не имеют той полноты, если в момент триумфа я не могу обернуться и встретить её улыбку. Моя главная цель — найти ту, с кем даже молчание у костра будет ценнее любого золота, и сделать её самой счастливой, разделяя одну судьбу на двоих."
+  }
+];
+
+const catLabels = {
+  jdm: "🇯🇵 Япония & JDM",
+  cars: "🏎 Авто & Драйв",
+  travel: "🌍 Путешествия",
+  body: "💪 Тело & Здоровье",
+  extreme: "🏔 Экстрим",
+  business: "💼 Бизнес & Финансы",
+  growth: "🧠 Личностный рост",
+  style: "🎩 Стиль & Эстетика",
+  social: "🤝 Окружение & Семья",
+  skills: "🎨 Навыки & Опыт",
+  foundation: "💎 Главная мечта"
+};
+
+let done = JSON.parse(localStorage.getItem('dreams_101_done') || '[]');
+
+function save() {
+  localStorage.setItem('dreams_101_done', JSON.stringify(done));
+}
+
+function updateProgress() {
+  const count = done.length;
+  document.getElementById('progress-text').textContent = `${count} / 101`;
+  document.getElementById('progress-fill').style.width = `${(count / 101) * 100}%`;
+}
+
+function render(cat) {
+  const container = document.getElementById('list-container');
+  container.innerHTML = '';
+
+  const cats = cat === 'all' ? Object.keys(catLabels) : [cat];
+
+  cats.forEach(c => {
+    const items = dreams.filter(d => d.cat === c);
+    if (!items.length) return;
+
+    const section = document.createElement('div');
+    section.className = 'category-section';
+
+    const title = document.createElement('div');
+    title.className = 'cat-title';
+    title.textContent = catLabels[c];
+    section.appendChild(title);
+
+    items.forEach((d) => {
+      const item = document.createElement('div');
+      item.className = 'dream-item' + (done.includes(d.id) ? ' done' : '') + (d.special ? ' special-dream' : '');
+
+      item.innerHTML = `
+        <div class="dream-number">${d.id}</div>
+        <div style="flex:1">
+          <div class="dream-text">${d.text}</div>
+          ${d.desc ? `<div class="special-desc">${d.desc}</div>` : ''}
+          ${d.quote ? `<div class="special-quote">${d.quote}</div>` : ''}
+        </div>
+        <div class="dream-check">
+          <svg width="12" height="10" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      `;
+
+      item.addEventListener('click', () => {
+        if (done.includes(d.id)) {
+          done = done.filter(x => x !== d.id);
+          item.classList.remove('done');
+        } else {
+          done.push(d.id);
+          item.classList.add('done');
+        }
+        save();
+        updateProgress();
+      });
+
+      section.appendChild(item);
+    });
+
+    container.appendChild(section);
+  });
+  updateProgress();
+}
+
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.cat);
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+  });
+});
+
+render('all');
+</script>
+</body>
+</html>
